@@ -13,6 +13,9 @@ class Post(models.Model):
   createdAt = models.DateTimeField(auto_now_add=True)
   updatedAt = models.DateTimeField(auto_now=True)
 
+  class Meta:
+    ordering = ['-createdAt']
+
   def __getData__(self):
     postData = "%s %s %s" % (self.name, self.content, self.createdAt)
     return postData

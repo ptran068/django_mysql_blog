@@ -4,7 +4,7 @@ from django.views.generic import ListView
 
 # Create your views here.
 class ListPostView(ListView):
-    model = Post
+    
     def get (self, request, *args, **kwargs):
         template_name = 'blog/blog.html'
         obj = {
