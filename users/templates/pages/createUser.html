@@ -12,8 +12,16 @@
                     <div class="card">
                         <div class="card-header">Register</div>
                         <div class="card-body">
-                            <form name="my-form" onsubmit="return validform()" action="/user/create/" method="POST">
+                            <form name="my-form" onsubmit="return validform()" action="/register" method="POST">
                             {% csrf_token %}
+
+                                <div class="form-group row">
+                                    <label for="username" class="col-md-4 col-form-label text-md-right">User name</label>
+                                    <div class="col-md-6">
+                                        <input type="text" id="full_name" class="form-control" name="username">
+                                    </div>
+                                </div>
+
                                 <div class="form-group row">
                                     <label for="email" class="col-md-4 col-form-label text-md-right">Email</label>
                                     <div class="col-md-6">
@@ -24,21 +32,28 @@
                                 <div class="form-group row">
                                     <label for="first_name" class="col-md-4 col-form-label text-md-right">First Name</label>
                                     <div class="col-md-6">
-                                        <input type="text" id="email_address" class="form-control" name="firstName">
+                                        <input type="text" id="email_address" class="form-control" name="first_name">
                                     </div>
                                 </div>
 
                                 <div class="form-group row">
                                     <label for="last_name" class="col-md-4 col-form-label text-md-right">Last Name</label>
                                     <div class="col-md-6">
-                                        <input type="text" id="user_name" class="form-control" name="lastName">
+                                        <input type="text" id="user_name" class="form-control" name="last_name">
                                     </div>
                                 </div>
 
                                 <div class="form-group row">
-                                    <label for="phone_number" class="col-md-4 col-form-label text-md-right">Password</label>
+                                    <label for="password1" class="col-md-4 col-form-label text-md-right">Password</label>
                                     <div class="col-md-6">
-                                        <input type="password" id="phone_number" class="form-control" name="password">
+                                        <input type="password" id="phone_number" class="form-control" name="password1">
+                                    </div>
+                                </div>
+
+                                <div class="form-group row">
+                                    <label for="password1" class="col-md-4 col-form-label text-md-right">RePassword</label>
+                                    <div class="col-md-6">
+                                        <input type="password" id="phone_number" class="form-control" name="password2">
                                     </div>
                                 </div>
 

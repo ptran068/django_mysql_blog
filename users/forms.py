@@ -1,7 +1,4 @@
 from django import forms
-from .models import User
 
-class CreateUser(forms.ModelForm):
-    class Meta:
-        model=User
-        fields = ['firstName', 'lastName', 'password', 'email']
+
+# class CreateUser(forms.ModelForm):
