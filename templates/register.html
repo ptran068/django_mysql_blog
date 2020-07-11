@@ -1,32 +1,67 @@
-{% load static %}
-<html lang="en">
- <head>
-   <meta charset="UTF-8">
-   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-   <title>Signup</title>
- </head>
- <body>
-   
-   <h1>create account</h1>
-       
-       <form action="register" method="POST">
-       {% csrf_token %}
-           <input type="text" autofocus name="first_name" placeholder="first name" size="20" required>
-           <input type="text" name="last_name" placeholder="last name" size="20" required><br><br>
-           <input type="text" name="username" placeholder="usernamae" size="20"><br><br>
-           <input type="email" name="email" placeholder="email" size="46" required><br><br>
-           <input type="password" size="20" name="password1" placeholder="password" min="6" maxlength="10" required><br><br>
-           <input type="password" size="20" name="password2" placeholder="confirm password" required><br><br>
-           <input type="submit" value="register">
-               
-           </form>
- 
-             <div>
-                 {% for message in messages %}
-                 <h4>{{ message }}</h4>
-                 {% endfor %}
-             </div>
-           
- </body>
- </html>
-      
+{% extends "pages/base.html" %}
+
+{% block title %}Register{% endblock %}
+
+{% block content %}
+
+
+<main class="my-form">
+    <div class="cotainer">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                    <div class="card">
+                        <div class="card-header">Register</div>
+                        <div class="card-body">
+                            <form name="my-form" onsubmit="return validform()" action="/register" method="POST">
+                            {% csrf_token %}
+
+                                <div class="form-group row">
+                                    <label for="email" class="col-md-4 col-form-label text-md-right">Email</label>
+                                    <div class="col-md-6">
+                                        <input type="text" id="full_name" class="form-control" name="email">
+                                    </div>
+                                </div>
+
+                                <div class="form-group row">
+                                    <label for="first_name" class="col-md-4 col-form-label text-md-right">First Name</label>
+                                    <div class="col-md-6">
+                                        <input type="text" id="email_address" class="form-control" name="first_name">
+                                    </div>
+                                </div>
+
+                                <div class="form-group row">
+                                    <label for="last_name" class="col-md-4 col-form-label text-md-right">Last Name</label>
+                                    <div class="col-md-6">
+                                        <input type="text" id="user_name" class="form-control" name="last_name">
+                                    </div>
+                                </div>
+
+                                <div class="form-group row">
+                                    <label for="password1" class="col-md-4 col-form-label text-md-right">Password</label>
+                                    <div class="col-md-6">
+                                        <input type="password" id="phone_number" class="form-control" name="password1">
+                                    </div>
+                                </div>
+
+                                <div class="form-group row">
+                                    <label for="password1" class="col-md-4 col-form-label text-md-right">RePassword</label>
+                                    <div class="col-md-6">
+                                        <input type="password" id="phone_number" class="form-control" name="password2">
+                                    </div>
+                                </div>
+
+                                    <div class="col-md-6 offset-md-4">
+                                        <button type="submit" class="btn btn-primary">
+                                        Register
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+            </div>
+        </div>
+    </div>
+
+</main>
+{% endblock %}

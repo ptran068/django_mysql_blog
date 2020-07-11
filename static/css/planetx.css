@@ -22,7 +22,7 @@ body{
 .card{ 
     background-color: #fff;  
     margin: 0 auto;
-    width: 500px; 
+    width: 900px; 
     height: auto; 
     border: .8px solid #ccc;
     border-radius: 8px; 
@@ -86,7 +86,7 @@ padding: 10px;
 .engagement{
     display: inline-block;
     width: 100%;
-    margin: 4px 0px 0px;
+    margin: 15px 20px 20px;
     padding: 0px 16px;
 }
 .engagement a{

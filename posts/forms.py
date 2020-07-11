@@ -1,12 +1,17 @@
 from django import forms
-from .models import Post, Profile, Comment
+from .models import Post, Comment
+from django.contrib.auth.models import User
 
-class ProfileUpdateForm(forms.ModelForm):
+# class ProfileUpdateForm(forms.ModelForm):
+#     class Meta:
+#         model = Profile
+#         fields = ['address','image','cover_photos']
+
+class UserUpdateForm(forms.ModelForm):
+    email = forms.EmailField()
     class Meta:
-        model = Profile
-        fields = ['address','Dob','image','cover_photos']
-
-
+        model = User
+        fields = ['email']
 
 class NewCommentForm(forms.ModelForm):
     class Meta:
@@ -14,6 +19,11 @@ class NewCommentForm(forms.ModelForm):
         fields = ['content']
 
 class videoform(forms.ModelForm):
-    class Mete:
+    class Meta:
         model = Post
         fields = ('video', 'caption')
+
+class PostCreateForm(forms.ModelForm):
+    class Meta:
+        model = Post
+        fields = ('caption', 'image', 'author')

@@ -3,6 +3,7 @@
 
 
 {% for post in posts %}
+
 <div class="card">
     <div class="card_header">
  
@@ -13,17 +14,22 @@
             padding: 0;
             margin: -3px;
             border: 0 solid #000;
-            border-radius: 50%;" src="{{post.author.profile.image.url}}" alt="">
+            border-radius: 50%;" src="{{post.author.image.url}}" alt="">
         </div>
 
         <div class="post_info">
-            <!-- <a href="{% url 'user_posts' post.author.username %}"><div class="post_name">{{post.author}}</div></a> -->
-            <a href="{% url 'userprofile' post.author %}"><div class="post_name">{{post.author}}</div></a>
-            <div class="post_location">{{post.author.profile.address}}</div>
+            <a href=""><div class="post_name">{{post.author}}</div></a>
         </div>
         <div class="post_options"><a href="{% url 'post_details' post.id %}"><svg class="bi bi-three-dots" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
             <path fill-rule="evenodd" d="M3 9.5a1.5 1.5 0 110-3 1.5 1.5 0 010 3zm5 0a1.5 1.5 0 110-3 1.5 1.5 0 010 3zm5 0a1.5 1.5 0 110-3 1.5 1.5 0 010 3z" clip-rule="evenodd"/>
           </svg></div></a>
+
+        <div class="caption">
+        <span><p><h5>{{post.caption}}</h5></p></span>
+    </div>
+    <div style="opacity: 0.7;" class="time_posted">
+        {{post.created_date}} <!--{{post.created_date | timesince}} ago for days and time  -->
+    </div>     
 
     </div>
     <div class="post_image">
@@ -50,38 +56,9 @@
             <path fill-rule="evenodd" d="M8 12l5 3V3a2 2 0 00-2-2H5a2 2 0 00-2 2v12l5-3zm-4 1.234l4-2.4 4 2.4V3a1 1 0 00-1-1H5a1 1 0 00-1 1v10.234z" clip-rule="evenodd"/>
           </svg> -->
 
-        <form id="favoriteform" action="{% url 'favourite' %}" method="POST" class="ui form">
-                  {% csrf_token %}
-                  <input type="hidden" name="post_id" value="{{post.id}}">
-                  {% if user not in post.favourite.all %}
-            <button style="float: right;
-            margin-right: 13px;
-            border: #fafafa;
-            background-color: #fafafa;
-        "><a href="javascript:void()" onclick="document.getElementById('favoriteform').submit();"><span class="glyphicon"><svg class="bi bi-bookmark" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                <path fill-rule="evenodd" d="M8 12l5 3V3a2 2 0 00-2-2H5a2 2 0 00-2 2v12l5-3zm-4 1.234l4-2.4 4 2.4V3a1 1 0 00-1-1H5a1 1 0 00-1 1v10.234z" clip-rule="evenodd"/>
-              </svg></span></a></button>
-              <!-- <button class="btn btn-success btn-sm">Save</button> -->
-              {% else %}
-              
-            <button style="float: right;
-            margin-right: 13px;
-            border: #fafafa;
-            background-color: #fafafa;
-        "><a href="javascript:void()" onclick="document.getElementById('favoriteform').submit();">
-                <span class="glyphicon glyphicon-bookmark">
-
-               </span>
-            </a></button>
-            <!-- <button class="btn btn-danger btn-sm">Saved</button> -->
-              {% endif %}
-
-
-            </form>
-            
         
     <!-- likes -->
-
+{% comment %} 
     <div class="likes" style="padding: 7px;">
         <form action="{% url 'like_post' %}" method="POST" class="ui form">
             {% csrf_token %}
@@ -94,29 +71,7 @@
         </form>
         <strong style="opacity: 0.7;">{{post.liked.all.count}} Likes</strong>
         </div>
-    </div>
-        <!-- end likes -->
-        
-    
-        <!-- comments
-
-    <div class="row">
-        <div class="col-6">
-            <small style="opacity: 0.6; padding: 35px;">
-                {{ post.number_of_comments }} comment(s)
-            </small>
-        </div>
-    </div>
-         end comments  -->
-
-    
-    <div class="caption">
-        <a style="opacity: 0.7;" href="{% url 'post_details' post.id %}"><h4><strong>{{post.author}}</strong></h4></a>
-        <span><p><h5>-{{post.caption}}</h5></p></span>
-    </div>
-    <div style="opacity: 0.7;" class="time_posted">
-        {{post.created_date}} <!--{{post.created_date | timesince}} ago for days and time  -->
-    </div>                    <!-- {{post.created_date | date:"F d, Y"}} for date only -->
+    </div> {% endcomment %}
 </div>
 {% endfor %}
 {% endblock %}

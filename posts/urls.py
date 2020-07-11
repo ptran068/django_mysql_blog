@@ -1,9 +1,12 @@
 from django.urls import path
 from . import views
-
+from .views import CreatePost, PostDetail
 urlpatterns = [
+    path('',views.base, name='base'),
+    path('register', views.createUser, name = 'register'),
+
     path('index', views.index, name='index'),
-    path('profile_posts', views.profile_posts, name='profile_posts'),
-    
-    # path('create', createPostView.as_view())
+    path('post/<int:pk>/',PostDetail.as_view(), name='post_details' ),
+  
+    path('post/create', CreatePost.as_view(), name = 'create-post')
 ]
