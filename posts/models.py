@@ -19,8 +19,8 @@ class Post(models.Model):
     def __str__(self):
         return self.caption
 
-    # def get_absolute_url(self):
-    #     return reverse('index', kwargs={'pk':self.pk})
+    def get_absolute_url(self):
+        return reverse('index')
 
         
 #############################################

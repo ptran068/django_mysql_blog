@@ -57,26 +57,20 @@ def index(request):
         'posts' : posts,
         'user' : user,
     }
-    print(posts)
     return render(request,'index.html',context)
 
 ############################
 #create Post
 #authorize request.user.has_perm('posts.add_post')
-class CreatePost(LoginRequiredMixin, View):
+class CreatePost(LoginRequiredMixin, CreateView):
     login_url ='/login'
-    model= Post
+    model = Post
+    template_name = 'post_form.html'
+    fields = ['image','caption']
 
-    def get(self, request):
-        return render(request, 'post_form.html')
-
-    def post(self, request):
-        caption=request.POST['caption']
-        image=request.FILES['image']
-        author = request.user
-        post = Post(image= image, caption= caption, author=author)
-        post.save()
-        return redirect('index')
+    def form_valid(self, form):
+        form.instance.author = self.request.user
+        return super().form_valid(form)
 
 class PostDetail(ListView):
     model = Post
