@@ -8,5 +8,8 @@ urlpatterns = [
     path('index', views.index, name='index'),
     path('post/<int:pk>/',PostDetail.as_view(), name='post_details' ),
   
-    path('post/create', CreatePost.as_view(), name = 'create-post')
+    path('post/create', CreatePost.as_view(), name = 'create-post'),
+    path('comment/<int:id>', views.createComment, name = 'comment'),
+    path('get-omment/<int:id>', views.createComment, name = 'get-comment'),
+
 ]

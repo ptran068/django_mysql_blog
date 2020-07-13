@@ -31,7 +31,6 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    # 'channels',
     'posts',
     'home',
     'users',
@@ -44,7 +43,6 @@ INSTALLED_APPS = [
     'crispy_forms',
        # 3rd party
     'rest_framework',
-    'channels',
 
 ]
 
@@ -91,9 +89,9 @@ WSGI_APPLICATION = 'django_mysql.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql', 
-        'NAME': 'django_demo',
+        'NAME': 'blog',
         'USER': 'root',
-        'PASSWORD': 'phongphong',
+        'PASSWORD': 'Current-Root-Password',
         'HOST': 'localhost',
         'PORT': 3306,
     }
@@ -147,18 +145,3 @@ STATICFILES_DIRS = [
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-# Import local_settings.py
-try:
-    from local_settings import *
-except ImportError:
-    pass
-
-ASGI_APPLICATION = 'django_mysql.routing.application'
-CHANNEL_LAYERS = {
-    'default': {
-        'BACKEND': 'channels_redis.core.RedisChannelLayer',
-        'CONFIG': {
-            "hosts": [('127.0.0.1', 6379)],
-        },
-    },
-}

@@ -80,3 +80,23 @@ class PostDetail(ListView):
         # context[""] = 
         return context
     
+@decorators.login_required(login_url='login')
+def createComment(request, id):
+    if request.method == 'POST':
+        post = Post.objects.get(id=id)
+        form = NewCommentForm(request.POST)
+        if form.is_valid():
+            form.instance.author = request.user
+            form.instance.post_connected = post
+            form.save()
+            return redirect('index')
+        else:
+            return redirect('index')
+    else:
+        return redirect('index')
+
+
+def getCommentsByPostID(request, postID):
+    if request.method == 'GET':
+        comments = Comment.objects.filter(post_connected=postID)
+        return render(request, 'index.html', { 'comment': comments})
