@@ -8,14 +8,44 @@ from django.views.generic import ListView, DetailView, CreateView, UpdateView, D
 from django.contrib import messages
 from django.conf import settings
 from django.http import HttpResponse, HttpResponseRedirect
-from django.db.models import Q
 from django.contrib.messages.views import SuccessMessageMixin
 from django.views.decorators.http import require_http_methods
 from django.contrib.auth import decorators
 from django.views import View
 from django.contrib.auth import get_user_model
 
+#rest_apis
+from rest_framework.views import APIView   
+from rest_framework.response import Response
+from rest_framework import status
+from .serializers import GetAllPost, CreatePost, AuthCustomTokenSerializer
+from rest_framework import generics
+from rest_framework.authentication import SessionAuthentication, BasicAuthentication
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.authtoken.models import Token
+from rest_framework.authtoken.views import ObtainAuthToken
+
+#ObtainAuthToken to custom view response
+
+
 User = get_user_model()
+
+
+#authen api
+
+class CustomAuthToken(ObtainAuthToken):
+    
+    def post(self, request, *args, **kwargs):
+        serializer = AuthCustomTokenSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user = serializer.validated_data['user']
+        token, created = Token.objects.get_or_create(user=user)
+        return Response({
+            'token': token.key,
+            'user_id': user.pk,
+            'email': user.email
+        }, status = status.HTTP_200_OK)
+
 
 # Create your views here.
 def base(request):
@@ -96,7 +126,20 @@ def createComment(request, id):
         return redirect('index')
 
 
-def getCommentsByPostID(request, postID):
+def getCommentsByPostID(request, id):
     if request.method == 'GET':
-        comments = Comment.objects.filter(post_connected=postID)
+        comments = Comment.objects.filter(post_connected=id)
         return render(request, 'index.html', { 'comment': comments})
+
+# def likePost(request, post)
+#######  APIs
+class getAllPosts(APIView):
+    def get(self, request):
+        listPosts = Post.objects.all()
+        serializers_data = GetAllPost(listPosts, many = True)
+        return Response(data= serializers_data.data, status = status.HTTP_200_OK)
+
+    # def post(self, request):
+    #     data = CreatePost(data= request.data)
+    #     caption = data.data['caption']
+    #     image
