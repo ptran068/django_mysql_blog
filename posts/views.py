@@ -15,15 +15,16 @@ from django.views import View
 from django.contrib.auth import get_user_model
 
 #rest_apis
-from rest_framework.views import APIView   
+from rest_framework.views import APIView 
 from rest_framework.response import Response
 from rest_framework import status
-from .serializers import GetAllPost, CreatePost, AuthCustomTokenSerializer
+from .serializers import GetAllPost, CreatePost, AuthCustomTokenSerializer, CreateComment
 from rest_framework import generics
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authtoken.models import Token
 from rest_framework.authtoken.views import ObtainAuthToken
+from rest_framework.decorators import api_view, authentication_classes, permission_classes
 
 #ObtainAuthToken to custom view response
 
@@ -43,8 +44,26 @@ class CustomAuthToken(ObtainAuthToken):
         return Response({
             'token': token.key,
             'user_id': user.pk,
-            'email': user.email
+            'email': user.email,
+            'follower': user.follower,
+            'following': user.following,
         }, status = status.HTTP_200_OK)
+
+
+@api_view(['POST'])
+@authentication_classes([SessionAuthentication, BasicAuthentication])
+@permission_classes([IsAuthenticated])
+def createCommentByApis(request, postID):
+    if request.method == 'POST':
+        form = NewCommentForm(request.POST)
+        post = Post.objects.get(id = postID)
+        if form.is_valid():
+            form.instance.author = request.user
+            form.instance.post_connected = post
+            data = form.save()
+            serializer = CreateComment(data)
+
+            return Response(data = serializer, status = status.HTTP_201_CREATED)
 
 
 # Create your views here.

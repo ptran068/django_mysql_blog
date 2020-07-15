@@ -15,6 +15,7 @@ urlpatterns = [
     path('get-comment/<int:id>', views.createComment, name = 'get-comment'),
     path('api/getPosts', getAllPosts.as_view()),
 
-    path('api-token-auth', CustomAuthToken.as_view())
+    path('api-token-auth', CustomAuthToken.as_view()),
+    path('api/comment', views.createCommentByApis)
 
 ]

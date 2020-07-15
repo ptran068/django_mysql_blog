@@ -83,16 +83,15 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'django_mysql.wsgi.application'
-
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql', 
-        'NAME': 'blog',
+        'NAME': 'django_demo',
         'USER': 'root',
-        'PASSWORD': 'Current-Root-Password',
+        'PASSWORD': 'phongphong',
         'HOST': 'localhost',
         'PORT': 3306,
     }
