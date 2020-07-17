@@ -21,6 +21,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = '=zv$_cu--ca0)7(z*2q$%hei72!(=oawwq&)y35n_^7nskx^_3'
+REFRESH_JWT_SECRET = 'local3@.12'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -34,20 +35,22 @@ INSTALLED_APPS = [
     'posts',
     'home',
     'users',
+    'corsheaders',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'crispy_forms',
+    # 'crispy_forms',
        # 3rd party
     'rest_framework',
-    'rest_framework.authtoken'
+    'rest_framework.authtoken',
 
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -83,15 +86,19 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'django_mysql.wsgi.application'
+CORS_ORIGIN_WHITELIST = (
+    'http://localhost:8000',
+)
+
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql', 
-        'NAME': 'django_demo',
+        'NAME': 'blog',
         'USER': 'root',
-        'PASSWORD': 'phongphong',
+        'PASSWORD': 'Current-Root-Password',
         'HOST': 'localhost',
         'PORT': 3306,
     }
@@ -124,12 +131,13 @@ AUTH_USER_MODEL = 'users.CustomUser'
 #rest_apis
 
 REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': (
-               'rest_framework.authentication.TokenAuthentication',
-    ),
-    'DEFAULT_PERMISSION_CLASSES':(
-                'rest_framework.permissions.IsAuthenticated',
-    ),
+    # 'DEFAULT_PERMISSION_CLASSES': (
+    #     'rest_framework.permissions.IsAuthenticated',
+    # ),
+    # 'DEFAULT_AUTHENTICATION_CLASSES': (
+    #     'rest_framework.authentication.BasicAuthentication',
+    #     'rest_framework.authentication.SessionAuthentication',
+    # ),
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 10,
 

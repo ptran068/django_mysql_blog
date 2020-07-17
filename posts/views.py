@@ -25,7 +25,8 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.authtoken.models import Token
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
-
+# from rest_framework_jwt.authentication import JSONWebTokenAuthentication
+from django_mysql.middlewares.authentication import AuthenticationJWT, SessionAuthentication
 #ObtainAuthToken to custom view response
 
 
@@ -34,8 +35,7 @@ User = get_user_model()
 
 #authen api
 
-class CustomAuthToken(ObtainAuthToken):
-    
+class CustomAuthToken(ObtainAuthToken): 
     def post(self, request, *args, **kwargs):
         serializer = AuthCustomTokenSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -50,20 +50,21 @@ class CustomAuthToken(ObtainAuthToken):
         }, status = status.HTTP_200_OK)
 
 
-@api_view(['POST'])
-@authentication_classes([SessionAuthentication, BasicAuthentication])
-@permission_classes([IsAuthenticated])
+@api_view(['GET', 'POST'])
 def createCommentByApis(request, postID):
     if request.method == 'POST':
-        form = NewCommentForm(request.POST)
-        post = Post.objects.get(id = postID)
-        if form.is_valid():
-            form.instance.author = request.user
-            form.instance.post_connected = post
-            data = form.save()
-            serializer = CreateComment(data)
+        
+        serializers_comment = CreateComment(data = request.data)
+        serializers_comment.instance.author = request.user
+        serializers_comment.instance.post_connected = postID
+        # post = Post.objects.get(id = postID)
+        if serializers_comment.is_valid():
+ 
+            print(serializers_comment)
+            serializers_comment.save()
 
-            return Response(data = serializer, status = status.HTTP_201_CREATED)
+            return Response(data = serializers_comment.data, status = status.HTTP_201_CREATED)
+        return Response(serializers_comment.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 # Create your views here.
@@ -131,6 +132,7 @@ class PostDetail(ListView):
     
 @decorators.login_required(login_url='login')
 def createComment(request, id):
+    print(request.path)
     if request.method == 'POST':
         post = Post.objects.get(id=id)
         form = NewCommentForm(request.POST)
@@ -152,7 +154,11 @@ def getCommentsByPostID(request, id):
 
 # def likePost(request, post)
 #######  APIs
+
 class getAllPosts(APIView):
+    authentication_classes = [SessionAuthentication, AuthenticationJWT]
+    permission_classes = [IsAuthenticated]
+
     def get(self, request):
         listPosts = Post.objects.all()
         serializers_data = GetAllPost(listPosts, many = True)

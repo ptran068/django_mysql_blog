@@ -4,6 +4,7 @@ from .managers import CustomUserManager
 
 class CustomUser(AbstractUser):
     username = None
+    # id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     email = models.EmailField(('email address'), unique=True)
     image = models.ImageField(blank=True, null=True, default='cover3.jpeg', upload_to='profile_pics')
     cover_photos = models.ImageField(blank=True, null=True,default='cover3.jpeg',upload_to='cover_pics')
@@ -16,3 +17,4 @@ class CustomUser(AbstractUser):
 
     def __str__(self):
         return self.email
+        
