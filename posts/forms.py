@@ -26,4 +26,4 @@ class videoform(forms.ModelForm):
 class PostCreateForm(forms.ModelForm):
     class Meta:
         model = Post
-        fields = ('caption', 'image', 'author')
+        fields = ['caption', 'image', 'author']

@@ -7,16 +7,25 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework import exceptions
 from rest_framework.authentication import authenticate
+from users.models import CustomUser
+# from django.contrib.auth import get_user_model
+
 #serializers lay du lieu tu moddel chuyen ve json cho client va nguowc lai
 
+
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CustomUser
+        fields = ['id', 'email']
 class GetAllPost(serializers.ModelSerializer):
-    # author = serializers.PrimaryKeyRelatedField(many=True, queryset=CustomUser.objects.get())
+    # author = serializers.PrimaryKeyRelatedField(many=False, queryset=CustomUser.objects.get(id =author))
+    author = UserSerializer(many=False)
     class Meta:
         model = Post
-        fields = ('id', 'caption', 'author')
+        fields = ('id', 'caption', 'author', 'image')
 
     
-class CreatePost(serializers.ModelSerializer):
+class CreatePostSerializer(serializers.ModelSerializer):
     class Meta:
         model = Post
         fields = ('caption', 'image')
@@ -45,4 +54,5 @@ class AuthCustomTokenSerializer(serializers.Serializer):
 class CreateComment(serializers.ModelSerializer):
     class Meta:
         model = Comment
-        fields = ('content')
+        fields = ['content']
+        

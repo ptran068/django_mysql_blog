@@ -3,29 +3,29 @@ from .models import Post, Comment, Like
 from django.utils import timezone
 from .forms import UserUpdateForm, NewCommentForm, PostCreateForm
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
 from django.conf import settings
-from django.http import HttpResponse, HttpResponseRedirect
-from django.contrib.messages.views import SuccessMessageMixin
 from django.views.decorators.http import require_http_methods
 from django.contrib.auth import decorators
-from django.views import View
 from django.contrib.auth import get_user_model
+from django.db.models import Q
+
+
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
+from django.views import View
+from rest_framework.generics import CreateAPIView, UpdateAPIView, DestroyAPIView, ListAPIView
+from rest_framework.views import APIView 
 
 #rest_apis
-from rest_framework.views import APIView 
 from rest_framework.response import Response
 from rest_framework import status
-from .serializers import GetAllPost, CreatePost, AuthCustomTokenSerializer, CreateComment
+from .serializers import GetAllPost, CreatePostSerializer, AuthCustomTokenSerializer, CreateComment
 from rest_framework import generics
-from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authtoken.models import Token
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
-# from rest_framework_jwt.authentication import JSONWebTokenAuthentication
 from django_mysql.middlewares.authentication import AuthenticationJWT, SessionAuthentication
 #ObtainAuthToken to custom view response
 
@@ -51,20 +51,47 @@ class CustomAuthToken(ObtainAuthToken):
 
 
 @api_view(['GET', 'POST'])
+@authentication_classes([AuthenticationJWT])
+@permission_classes([IsAuthenticated])
 def createCommentByApis(request, postID):
     if request.method == 'POST':
         
         serializers_comment = CreateComment(data = request.data)
-        serializers_comment.instance.author = request.user
-        serializers_comment.instance.post_connected = postID
-        # post = Post.objects.get(id = postID)
+        post = Post.objects.get(id = postID)
         if serializers_comment.is_valid():
  
-            print(serializers_comment)
+            serializers_comment.save(author = request.user, post_connected = post)
+
+            return Response(data = serializers_comment.data, status = status.HTTP_201_CREATED)
+        return Response(serializers_comment.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['PUT'])
+@authentication_classes([AuthenticationJWT])
+@permission_classes([IsAuthenticated])
+def updateComment(request, id):
+    if request.method == 'PUT':
+        comment = Comment.objects.get(id = id)
+        serializer = CreateComment(instance = comment, data = request.data)       
+        if serializers_comment.is_valid():
             serializers_comment.save()
 
             return Response(data = serializers_comment.data, status = status.HTTP_201_CREATED)
         return Response(serializers_comment.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['POST'])
+@authentication_classes([AuthenticationJWT])
+@permission_classes([IsAuthenticated])
+def createPostAPI(request):
+    if request.method == 'POST':
+        serializers = CreatePostSerializer(data = request.data)
+        if serializers.is_valid():
+            serializers.save(author = request.user)
+
+            return Response(data = serializers.data, status = status.HTTP_201_CREATED)
+        return Response(serializers.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 
 # Create your views here.
@@ -112,6 +139,7 @@ def index(request):
 ############################
 #create Post
 #authorize request.user.has_perm('posts.add_post')
+
 class CreatePost(LoginRequiredMixin, CreateView):
     login_url ='/login'
     model = Post
@@ -129,6 +157,20 @@ class PostDetail(ListView):
         context = super().get_context_data(**kwargs)
         # context[""] = 
         return context
+
+class EditPost(UpdateAPIView):
+    authentication_classes = [SessionAuthentication, AuthenticationJWT]
+    permission_classes = [IsAuthenticated]
+    serializer_class = CreatePostSerializer
+    queryset = Post.objects.all()
+
+
+class DeletePost(DestroyAPIView):
+    authentication_classes = [SessionAuthentication, AuthenticationJWT]
+    permission_classes = [IsAuthenticated]
+    # serializer_class = CreatePostSerializer
+    queryset = Post.objects.all()
+  
     
 @decorators.login_required(login_url='login')
 def createComment(request, id):
@@ -155,14 +197,25 @@ def getCommentsByPostID(request, id):
 # def likePost(request, post)
 #######  APIs
 
-class getAllPosts(APIView):
+class getAllPosts(ListAPIView):
     authentication_classes = [SessionAuthentication, AuthenticationJWT]
     permission_classes = [IsAuthenticated]
+    queryset = Post.objects.all()
+    filterset_fields = ['caption']
+    serializer_class = GetAllPost
+    ordering_fields = ['caption']
+    def get_queryset(self):
+        queryset = Post.objects.all()
+        email = self.request.query_params.get('email', None)
+        if email is not None:
+            queryset = queryset.filter(author__email=email)
+        return queryset
+    
 
-    def get(self, request):
-        listPosts = Post.objects.all()
-        serializers_data = GetAllPost(listPosts, many = True)
-        return Response(data= serializers_data.data, status = status.HTTP_200_OK)
+    # def get(self, request):
+    #     listPosts = Post.objects.all()
+    #     serializers_data = GetAllPost(listPosts, many = True)
+    #     return Response(data= serializers_data.data, status = status.HTTP_200_OK)
 
     # def post(self, request):
     #     data = CreatePost(data= request.data)
