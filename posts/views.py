@@ -59,7 +59,7 @@ def likePost(request, postID):
         if serializer.is_valid():
             if user not in post.liked.all():
                like = serializer.save(user = user, post = post)
-               post.save(liked = like)
+               post.save(liked = user)
                return Response(data = serializer.data, status = status.HTTP_201_CREATED)
             else:
                 like = serializer.update()
@@ -68,8 +68,6 @@ def likePost(request, postID):
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         
-
-
 
 @api_view(['PUT'])
 @authentication_classes([AuthenticationJWT])
@@ -203,7 +201,7 @@ def getCommentsByPostID(request, id):
 #######  APIs
 
 class getAllPosts(ListAPIView):
-    authentication_classes = [SessionAuthentication, AuthenticationJWT]
+    authentication_classes = [AuthenticationJWT]
     permission_classes = [IsAuthenticated]
     queryset = Post.objects.all()
     filterset_fields = ['caption']

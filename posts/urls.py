@@ -18,5 +18,6 @@ urlpatterns = [
     path('api/comment/<int:postID>', views.createCommentByApis),
     path('api/post', views.createPostAPI),
     path('api/comment/<int:postID>', views.likePost),
+    path('api/like/<int:postID>', views.likePost),
 
 ]
