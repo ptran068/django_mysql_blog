@@ -20,7 +20,7 @@ from rest_framework.views import APIView
 #rest_apis
 from rest_framework.response import Response
 from rest_framework import status
-from .serializers import GetAllPost, CreatePostSerializer, AuthCustomTokenSerializer, CreateComment
+from .serializers import GetAllPost, CreatePostSerializer, CreateComment, LikePostSerializer
 from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authtoken.models import Token
@@ -29,25 +29,7 @@ from rest_framework.decorators import api_view, authentication_classes, permissi
 from django_mysql.middlewares.authentication import AuthenticationJWT, SessionAuthentication
 #ObtainAuthToken to custom view response
 
-
 User = get_user_model()
-
-
-#authen api
-
-class CustomAuthToken(ObtainAuthToken): 
-    def post(self, request, *args, **kwargs):
-        serializer = AuthCustomTokenSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        user = serializer.validated_data['user']
-        token, created = Token.objects.get_or_create(user=user)
-        return Response({
-            'token': token.key,
-            'user_id': user.pk,
-            'email': user.email,
-            'follower': user.follower,
-            'following': user.following,
-        }, status = status.HTTP_200_OK)
 
 
 @api_view(['GET', 'POST'])
@@ -66,6 +48,29 @@ def createCommentByApis(request, postID):
         return Response(serializers_comment.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+@api_view(['GET', 'POST'])
+@authentication_classes([AuthenticationJWT])
+@permission_classes([IsAuthenticated])
+def likePost(request, postID):
+    if request.method == 'POST':
+        user = request.user
+        post = Post.objects.get(id = postID)
+        serializer = LikePostSerializer(data = request.data)
+        if serializer.is_valid():
+            if user not in post.liked.all():
+               like = serializer.save(user = user, post = post)
+               post.save(liked = like)
+               return Response(data = serializer.data, status = status.HTTP_201_CREATED)
+            else:
+                like = serializer.update()
+                post.save(liked = like)
+                return Response(data = serializer.data, status = status.HTTP_201_CREATED)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        
+
+
+
 @api_view(['PUT'])
 @authentication_classes([AuthenticationJWT])
 @permission_classes([IsAuthenticated])
@@ -73,11 +78,11 @@ def updateComment(request, id):
     if request.method == 'PUT':
         comment = Comment.objects.get(id = id)
         serializer = CreateComment(instance = comment, data = request.data)       
-        if serializers_comment.is_valid():
-            serializers_comment.save()
+        if serializer.is_valid():
+            serializer.save()
 
-            return Response(data = serializers_comment.data, status = status.HTTP_201_CREATED)
-        return Response(serializers_comment.errors, status=status.HTTP_400_BAD_REQUEST)
+            return Response(data = serializer.data, status = status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(['POST'])

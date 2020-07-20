@@ -1,6 +1,6 @@
 from django.urls import path
 from . import views
-from .views import CreatePost, PostDetail, getAllPosts, CustomAuthToken, EditPost, DeletePost
+from .views import CreatePost, PostDetail, getAllPosts, EditPost, DeletePost
 
 urlpatterns = [
     path('',views.base, name = 'base'),
@@ -15,9 +15,8 @@ urlpatterns = [
     path('api/posts', getAllPosts.as_view()),
     path('api/posts/<int:pk>', EditPost.as_view()),
     path('api/posts/delete/<int:pk>', DeletePost.as_view()),
-
-    path('api-token-auth', CustomAuthToken.as_view()),
     path('api/comment/<int:postID>', views.createCommentByApis),
     path('api/post', views.createPostAPI),
+    path('api/comment/<int:postID>', views.likePost),
 
 ]

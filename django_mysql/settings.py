@@ -97,9 +97,9 @@ CORS_ORIGIN_WHITELIST = (
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql', 
-        'NAME': 'blog',
+        'NAME': 'django_demo',
         'USER': 'root',
-        'PASSWORD': 'Current-Root-Password',
+        'PASSWORD': 'phongphong',
         'HOST': 'localhost',
         'PORT': 3306,
     }
@@ -132,9 +132,9 @@ AUTH_USER_MODEL = 'users.CustomUser'
 #rest_apis
 
 REST_FRAMEWORK = {
-    # 'DEFAULT_PERMISSION_CLASSES': (
-    #     'rest_framework.permissions.IsAuthenticated',
-    # ),
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    ),
     # 'DEFAULT_AUTHENTICATION_CLASSES': (
     #     'rest_framework.authentication.BasicAuthentication',
     #     'rest_framework.authentication.SessionAuthentication',
