@@ -20,9 +20,10 @@ class UserSerializer(serializers.ModelSerializer):
 class GetAllPost(serializers.ModelSerializer):
     # author = serializers.PrimaryKeyRelatedField(many=False, queryset=CustomUser.objects.get(id =author))
     author = UserSerializer(many=False)
+    liked = UserSerializer(many = True)
     class Meta:
         model = Post
-        fields = ('id', 'caption', 'author', 'image')
+        fields = ('id', 'caption', 'author', 'image', 'liked')
 
     
 class CreatePostSerializer(serializers.ModelSerializer):

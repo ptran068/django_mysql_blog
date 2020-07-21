@@ -7,11 +7,17 @@ from django.conf import settings
 from rest_framework import parsers, renderers, status
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from .serializers import AuthCustomTokenSerializer
+from .serializers import AuthCustomTokenSerializer, SendmailSerializer
 import datetime
 import jwt
-
 from rest_framework.authtoken.views import ObtainAuthToken
+from rest_framework.decorators import api_view, authentication_classes, permission_classes
+from django_mysql.middlewares.authentication import AuthenticationJWT, SessionAuthentication
+from rest_framework.permissions import IsAuthenticated
+import os
+from sendgrid import SendGridAPIClient
+from sendgrid.helpers.mail import Mail
+
 
 class JSONWebTokenAuth(ObtainAuthToken):
     # throttle_classes = ()
@@ -65,3 +71,29 @@ class HandleLogin(View):
         else:
             messages.info(request, "invalild username or password")
             return redirect('login')
+
+
+@api_view(['GET', 'POST'])
+@authentication_classes([AuthenticationJWT])
+@permission_classes([IsAuthenticated])
+def sendMail(request):
+    if request.method == 'POST':
+        serializer = SendmailSerializer(data = request.data)
+        user = request.user
+        if serializer.is_valid():
+            message = Mail(
+                subject = serializer.data['subject'],
+                from_email = 'ptran068@gmail.com',
+                to_emails= serializer.data['toUser'],
+                plain_text_content = serializer.data['message'],
+                html_content = '<strong>Lest go </strong>'
+            )
+            
+            try:
+                sg = SendGridAPIClient(os.environ['SENDGRID_API_KEY'])
+                res = sg.send(message)
+                return Response(data = serializer.data, status=status.HTTP_201_CREATED)
+            except Exception as e:
+                print(e)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

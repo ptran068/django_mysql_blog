@@ -22,3 +22,10 @@ class AuthCustomTokenSerializer(serializers.Serializer):
             raise exceptions.ValidationError('Emal and Password are required')
         attrs['user'] = user
         return attrs
+
+
+class SendmailSerializer(serializers.Serializer):
+    subject = serializers.CharField(max_length = 255)
+    message = serializers.CharField(max_length = 255)
+    toUser = serializers.CharField(max_length = 255)
+

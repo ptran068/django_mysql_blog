@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'django_filters',
+    'sendgrid',
 
 ]
 
@@ -97,9 +98,9 @@ CORS_ORIGIN_WHITELIST = (
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql', 
-        'NAME': 'django_demo',
+        'NAME': 'blog',
         'USER': 'root',
-        'PASSWORD': 'phongphong',
+        'PASSWORD': 'Current-Root-Password',
         'HOST': 'localhost',
         'PORT': 3306,
     }
@@ -143,6 +144,8 @@ REST_FRAMEWORK = {
     'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend']
 
 }
+
+#mail
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.0/topics/i18n/

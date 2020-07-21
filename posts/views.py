@@ -56,14 +56,15 @@ def likePost(request, postID):
         user = request.user
         post = Post.objects.get(id = postID)
         serializer = LikePostSerializer(data = request.data)
+        a = request.data['value']
         if serializer.is_valid():
             if user not in post.liked.all():
-               like = serializer.save(user = user, post = post)
-               post.save(liked = user)
+            #    serializer.save(user = user, post = post)
+               post.liked.add(user)
                return Response(data = serializer.data, status = status.HTTP_201_CREATED)
             else:
-                like = serializer.update()
-                post.save(liked = like)
+                # like = serializer.update(instance= like)
+                post.liked.remove(user)
                 return Response(data = serializer.data, status = status.HTTP_201_CREATED)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
